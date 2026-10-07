@@ -34,6 +34,28 @@ Or open [`requests.http`](requests.http) in IntelliJ IDEA and click the ▶ icon
 | POST   | `/tasks`      | Create a task                            |
 | PATCH  | `/tasks/{id}` | Update title and/or done                 |
 | DELETE | `/tasks/{id}` | Delete a task                            |
+| WS     | `/ws/tasks`   | Live task events; send text to create    |
+| GET    | `/tasks/events` | Live task events as Server-Sent Events |
+| GET    | `/live/`      | Browser demo page for the live features  |
+
+## Live updates (WebSockets & SSE)
+
+Open <http://localhost:8080/live/> in two browser windows. Add, check or delete a task in one
+window – the other one updates instantly.
+
+Every change made through the REST API or the WebSocket is published to a `TaskEventBus`
+(a Kotlin `SharedFlow`) and pushed to all connected clients as JSON:
+
+```json
+{"type":"created","task":{"id":4,"title":"Try Ktor","done":false}}
+```
+
+From the terminal:
+
+```bash
+curl -N http://localhost:8080/tasks/events   # SSE stream, keep open
+websocat ws://localhost:8080/ws/tasks          # WebSocket, type a title + Enter
+```
 
 ## Project map (one topic per file)
 
@@ -46,6 +68,12 @@ Or open [`requests.http`](requests.http) in IntelliJ IDEA and click the ▶ icon
 | Data classes / DTOs           | [`tasks/Task.kt`](src/main/kotlin/com/example/tasks/Task.kt)                               |
 | Error handling (StatusPages)  | [`plugins/StatusPages.kt`](src/main/kotlin/com/example/plugins/StatusPages.kt)             |
 | Request validation            | [`plugins/Validation.kt`](src/main/kotlin/com/example/plugins/Validation.kt)               |
+| WebSockets & SSE setup       | [`plugins/Sockets.kt`](src/main/kotlin/com/example/plugins/Sockets.kt)                     |
+| Live endpoints (WS + SSE)     | [`live/LiveRoutes.kt`](src/main/kotlin/com/example/live/LiveRoutes.kt)                     |
+| Pub/sub with SharedFlow       | [`tasks/TaskEventBus.kt`](src/main/kotlin/com/example/tasks/TaskEventBus.kt)               |
+| Sealed classes as JSON events | [`tasks/TaskEvent.kt`](src/main/kotlin/com/example/tasks/TaskEvent.kt)                     |
+| Browser WebSocket client      | [`static/index.html`](src/main/resources/static/index.html)                                |
+| Testing WebSockets            | [`LiveRoutesTest.kt`](src/test/kotlin/com/example/live/LiveRoutesTest.kt)                  |
 | Logging (CallLogging)         | [`plugins/Monitoring.kt`](src/main/kotlin/com/example/plugins/Monitoring.kt)               |
 | Repository pattern            | [`tasks/TaskRepository.kt`](src/main/kotlin/com/example/tasks/TaskRepository.kt)           |
 | Thread-safe in-memory storage | [`tasks/InMemoryTaskRepository.kt`](src/main/kotlin/com/example/tasks/InMemoryTaskRepository.kt) |

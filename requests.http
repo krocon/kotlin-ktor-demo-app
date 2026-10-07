@@ -42,3 +42,10 @@ DELETE http://localhost:8080/tasks/1
 
 ### Unknown task (404)
 GET http://localhost:8080/tasks/999
+
+### Live: stream all task events as Server-Sent Events (keep it open, then create/delete tasks)
+GET http://localhost:8080/tasks/events
+Accept: text/event-stream
+
+### Live: WebSocket – IntelliJ opens an interactive console; type a title to create a task
+WEBSOCKET ws://localhost:8080/ws/tasks

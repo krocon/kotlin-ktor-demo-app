@@ -41,7 +41,8 @@ class TaskRoutesTest {
         val response = client.get("/")
 
         assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals("Hello, Ktor!", response.bodyAsText())
+        assertTrue("Hello, Ktor!" in response.bodyAsText())
+        assertTrue("href=\"/live/\"" in response.bodyAsText())
     }
 
     @Test

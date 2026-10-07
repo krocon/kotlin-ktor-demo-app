@@ -3,9 +3,11 @@ package com.example
 import com.example.plugins.configureMonitoring
 import com.example.plugins.configureRouting
 import com.example.plugins.configureSerialization
+import com.example.plugins.configureSockets
 import com.example.plugins.configureStatusPages
 import com.example.plugins.configureValidation
 import com.example.tasks.InMemoryTaskRepository
+import com.example.tasks.TaskEventBus
 import com.example.tasks.TaskRepository
 import io.ktor.server.application.Application
 import io.ktor.server.engine.embeddedServer
@@ -25,14 +27,16 @@ fun main() {
 
 /**
  * The application module wires all plugins and routes together.
- * The repository is a parameter so tests can pass in a fresh instance.
+ * Dependencies are parameters so tests can pass in fresh instances.
  */
 fun Application.module(
     taskRepository: TaskRepository = InMemoryTaskRepository.withSampleData(),
+    eventBus: TaskEventBus = TaskEventBus(),
 ) {
     configureMonitoring()
     configureSerialization()
     configureStatusPages()
     configureValidation()
-    configureRouting(taskRepository)
+    configureSockets()
+    configureRouting(taskRepository, eventBus)
 }

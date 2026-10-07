@@ -30,9 +30,14 @@ dependencies {
     implementation(libs.ktor.server.call.logging)
     implementation(libs.logback.classic)
 
+    // Live streaming: WebSockets + Server-Sent Events
+    implementation(libs.ktor.server.websockets)
+    implementation(libs.ktor.server.sse)
+
     // Testing
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.ktor.client.content.negotiation)
+    testImplementation(libs.ktor.client.websockets)
     testImplementation(kotlin("test"))
 }
 
